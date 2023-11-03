@@ -10,6 +10,7 @@ module tt_um_get_workflow(
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+    assign uo_out[7:0] = ui_in[7:0];
 
     
 
