@@ -11,6 +11,12 @@ module tt_um_get_workflow(
     input  wire       rst_n     // reset_n - low to reset
 );
     assign uo_out[7:0] = ui_in[7:0];
+    assign uio_out[7:0] = uio_in[7:0];
+    assign uio_oe[7:0] = {8'b0};
+  
+  wire [2:0] generic;
+  assign generic[2:0] = {ena,clk,rst_n};
+    
 
     
 
