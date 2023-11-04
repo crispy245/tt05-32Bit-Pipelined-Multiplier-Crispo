@@ -19,7 +19,7 @@ module tt_um_4_bit_pipeline_multiplier(
     multi multi0(.a(ui_in[3:0]),
              .b(ui_in[7:4]),
              .clk(clk),
-             .product(.uo_out));
+             .product(uo_out));
 
     
     
