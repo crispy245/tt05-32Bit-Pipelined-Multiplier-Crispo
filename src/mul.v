@@ -39,7 +39,7 @@ module mul#(parameter XLEN = 32)
         .en_i(ready_temp[0]),
         .flush_i(~req),
         .a_i(a_temp),
-        .result_o(a_next1),
+        .result_o({a_next1}),
         .ready_o(ready_temp[1])
     );
         
@@ -50,7 +50,7 @@ module mul#(parameter XLEN = 32)
         .en_i(ready_temp[1]),
         .flush_i(~req),
         .a_i(a_next1),
-        .result_o(a_next2),
+        .result_o({a_next2}),
         .ready_o(ready_temp[2])
     );
 
@@ -61,7 +61,7 @@ module mul#(parameter XLEN = 32)
         .en_i(ready_temp[2]),
         .flush_i(~req),
         .a_i(a_next2),
-        .result_o(a_next3),
+        .result_o({a_next3}),
         .ready_o(ready_temp[3])
     );
 
@@ -72,7 +72,7 @@ module mul#(parameter XLEN = 32)
         .en_i(ready_temp[3]),
         .flush_i(~req),
         .a_i(a_next3),
-        .result_o(a_next4),
+        .result_o({a_next4}),
         .ready_o(ready_temp[4])
     );
 
@@ -83,7 +83,7 @@ module mul#(parameter XLEN = 32)
         .en_i(ready_temp[4]),
         .flush_i(~req),
         .a_i(a_next4),
-        .result_o(a_next5),
+        .result_o({a_next5}),
         .ready_o(ready_temp[5])
     );
 
