@@ -7,8 +7,11 @@ project:
 # Source files must be in ./src and you must list each source file separately
   source_files:        
     - tt_um_get_workflow.v
+    - mul.v
+    - mult_cell.v
+    - mult_cell0.v
 #    - decoder.v
-  top_module:  "tt_um_get_workflow"      # Put the name of your top module here, must start with "tt_um_". Make it unique by including your github username
+  top_module:  "tt_um_32_bit_pipeline_multiplier"      # Put the name of your top module here, must start with "tt_um_". Make it unique by including your github username
 
 # How many tiles your design occupies? A single tile is about 167x108 uM.
   tiles: "1x1"    # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2 or 8x2
@@ -21,18 +24,18 @@ yaml_version: 4
 #
 # Here is a great example: https://github.com/davidsiaw/tt02-davidsiaw-stackcalc/blob/38c5647f83aad2aec675d566aa3d67b98f0aac81/info.yaml
 documentation: 
-  author:       ""      # Your name
-  title:        ""      # Project title
+  author:       "Aldo"      # Your name
+  title:        "32 Bit Pipelined Multiplier"      # Project title
   language:     "Wokwi" # other examples include Verilog, Amaranth, VHDL, etc
-  description:  ""      # Short description of what your project does
+  description:  "A Pipelined Booth Multiplier"      # Short description of what your project does
 
 # Longer description of how the project works. You can use standard markdown format.
   how_it_works: |
-      Explain how your project works
+      Not operation inteded, just for learning purposes 
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
-      Explain how to test your project
+      Not operation inteded, just for learning purposes 
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
   inputs:               
@@ -46,14 +49,14 @@ documentation:
     - none
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
   outputs:
-    - segment a
-    - segment b
-    - segment c
-    - segment d
-    - segment e
-    - segment f
-    - segment g
-    - dot
+    - none
+    - none
+    - none
+    - none
+    - none
+    - none
+    - none
+    - none
 # A description of what the bidirectional I/O pins do (e.g. I2C SDA, I2C SCL, etc)
   bidirectional:
     - none
