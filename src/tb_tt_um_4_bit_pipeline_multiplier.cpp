@@ -21,7 +21,7 @@ int main(int argc, char** argv, char** env) {
         dut->ena = 1;
         dut->rst_n = 1;
         dut->clk ^= 1;
-        dut->ui_in = 119;
+        dut->ui_in = 221;
         dut->eval();    
     }
     while (sim_time < 20) {
