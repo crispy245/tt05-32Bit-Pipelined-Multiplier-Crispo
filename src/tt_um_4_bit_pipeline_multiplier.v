@@ -1,6 +1,6 @@
 `default_nettype none
 
-module tt_um_32_bit_pipeline_multiplier(
+module tt_um_4_bit_pipeline_multiplier(
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
     input  wire [7:0] uio_in,   // IOs: Bidirectional Input path
@@ -10,22 +10,18 @@ module tt_um_32_bit_pipeline_multiplier(
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-    assign uo_out[7:0] = ui_in[7:0];
     assign uio_out[7:0] = uio_in[7:0];
     assign uio_oe[7:0] = {8'b0};
   
     wire [2:0] generic;
     assign generic = {ena};
 
-    mul mul0(.clk_i(clk),
-             .rst_i(rst_n),
-             .req_i(1),
-             .flush_i(0),
-             .a_i(0),
-             .b_i(0),
-             .ready_o(),
-             .result_o()
-              );
+    mul mul0(.a(ui_in[3:0]),
+             .b(ui_in[7:4]),
+             .clk(clk),
+             .product(.uo_out));
+
+    
     
 
     

@@ -1,135 +1,48 @@
-module mul#(parameter XLEN = 32)
-(
-    input wire              clk_i,
-    input wire              rst_i,
-    input wire              req_i,
-    input wire              flush_i,    
-    input wire[XLEN-1 : 0]  a_i, 
-    input wire[XLEN-1 : 0]  b_i, 
-    output reg               ready_o,
-    output reg[XLEN*2-1 : 0]  result_o
+module mul(
+  input [3:0] a,          // 4-bit input A
+  input [3:0] b,          // 4-bit input B
+  input clk,
+  output [7:0] product    // 8-bit output (4-bit x 4-bit product)
 );
 
-    localparam IDLE = 2'b00,
-    CALC = 2'b01,
-    FINISH = 2'b10,
-    UNUSED = 2'b11;
+  wire [3:0] sum_vec[3:0];
+  wire [3:0] carry_vec[4:0];
 
-    reg [XLEN*2:0]   a_temp [XLEN-1:0];
-    reg [5:0]   ready_temp;
-    wire is_a_zero = ~(|a_i);
-    wire is_b_zero = ~(|b_i);
-    wire req = req_i & ~flush_i;
+  // Pipeline registers
+  reg [8:0] last_level;
 
-    mult_cell0 #(.XLEN(XLEN), .NrInputs(XLEN)) mult_cellB(
-        .clk_i(clk_i),
-        .rst_i(rst_i),
-        .en_i(req),
-        .flush_i(~req),
-        .a_i(a_i),
-        .b_i(b_i),
-        .result_o(a_temp),
-        .ready_o(ready_temp[0])
-    );
-    
-    wire [XLEN*2:0]   a_next1[XLEN>>1];//32 -> 16    
-    mult_cell #(.XLEN(XLEN), .NrInputs(XLEN), .NrOutput(XLEN>>1)) mult_cell0(
-        .clk_i(clk_i),
-        .rst_i(rst_i),
-        .en_i(ready_temp[0]),
-        .flush_i(~req),
-        .a_i(a_temp),
-        .result_o(a_next1),
-        .ready_o(ready_temp[1])
-    );
-        
-    wire [XLEN*2:0]   a_next2 [XLEN>>2];//16 -> 8
-    mult_cell #(.XLEN(XLEN), .NrInputs(XLEN>>1),.NrOutput(XLEN>>2)) mult_cell1(
-        .clk_i(clk_i),
-        .rst_i(rst_i),
-        .en_i(ready_temp[1]),
-        .flush_i(~req),
-        .a_i(a_next1),
-        .result_o(a_next2),
-        .ready_o(ready_temp[2])
-    );
+  adder adder0(1'b0, a[0]&b[0], 1'b0, carry_vec[0][0],sum_vec[0][0]);
+  adder adder1(1'b0, a[1]&b[0], 1'b0, carry_vec[0][1],sum_vec[0][1]);
+  adder adder2(1'b0, a[2]&b[0], 1'b0, carry_vec[0][2],sum_vec[0][2]);
+  adder adder3(1'b0, a[3]&b[0], 1'b0, carry_vec[0][3],sum_vec[0][3]);
 
-    wire [XLEN*2:0]   a_next3 [XLEN>>3];// 8 -> 4    
-    mult_cell #(.XLEN(XLEN), .NrInputs(XLEN>>2), .NrOutput(XLEN>>3)) mult_cell2(
-        .clk_i(clk_i),
-        .rst_i(rst_i),
-        .en_i(ready_temp[2]),
-        .flush_i(~req),
-        .a_i(a_next2),
-        .result_o(a_next3),
-        .ready_o(ready_temp[3])
-    );
+  adder adder4(sum_vec[0][1], a[0]&b[1], carry_vec[0][0], carry_vec[1][0],sum_vec[1][0]);
+  adder adder5(sum_vec[0][2], a[1]&b[1], carry_vec[0][1], carry_vec[1][1],sum_vec[1][1]);
+  adder adder6(sum_vec[0][3], a[2]&b[1], carry_vec[0][2], carry_vec[1][2],sum_vec[1][2]);
+  adder adder7(1'b0,          a[3]&b[1], carry_vec[0][3], carry_vec[1][3],sum_vec[1][3]);
 
-    wire [XLEN*2:0]   a_next4[XLEN>>4]; //4->2   
-    mult_cell #(.XLEN(XLEN), .NrInputs(XLEN>>3), .NrOutput(XLEN>>4)) mult_cell3(
-        .clk_i(clk_i),
-        .rst_i(rst_i),
-        .en_i(ready_temp[3]),
-        .flush_i(~req),
-        .a_i(a_next3),
-        .result_o(a_next4),
-        .ready_o(ready_temp[4])
-    );
+  adder adder8 (sum_vec[1][1], a[0]&b[2], carry_vec[1][0], carry_vec[2][0],sum_vec[2][0]);
+  adder adder9 (sum_vec[1][2], a[1]&b[2], carry_vec[1][1], carry_vec[2][1],sum_vec[2][1]);
+  adder adder10(sum_vec[1][3], a[2]&b[2], carry_vec[1][2], carry_vec[2][2],sum_vec[2][2]);
+  adder adder11(1'b0,          a[3]&b[2], carry_vec[1][3], carry_vec[2][3],sum_vec[2][3]);
 
-    wire [XLEN*2:0]   a_next5 [XLEN>>5]; // 2->1   
-    mult_cell #(.XLEN(XLEN), .NrInputs(XLEN>>4), .NrOutput(XLEN>>5)) mult_cell4(
-        .clk_i(clk_i),
-        .rst_i(rst_i),
-        .en_i(ready_temp[4]),
-        .flush_i(~req),
-        .a_i(a_next4),
-        .result_o(a_next5),
-        .ready_o(ready_temp[5])
-    );
+  adder adder12(sum_vec[2][1], a[0]&b[3], carry_vec[2][0], carry_vec[3][0],sum_vec[3][0]);
+  adder adder13(sum_vec[2][2], a[1]&b[3], carry_vec[2][1], carry_vec[3][1],sum_vec[3][1]);
+  adder adder14(sum_vec[2][3], a[2]&b[3], carry_vec[2][2], carry_vec[3][2],sum_vec[3][2]);
+  adder adder15(1'b0,          a[3]&b[3], carry_vec[2][3], carry_vec[3][3],sum_vec[3][3]);
 
-    reg [1:0] current_state;
-    reg [1:0] next_state;
+  adder adder16(sum_vec[3][1], carry_vec[3][0], 1'b0,            carry_vec[4][0],last_level[4]);
+  adder adder17(sum_vec[3][2], carry_vec[3][1], carry_vec[4][1], carry_vec[4][1],last_level[5]);
+  adder adder18(sum_vec[3][3], carry_vec[3][2], carry_vec[4][2], carry_vec[4][2],last_level[6]);
+  adder adder19(1'b0,          carry_vec[3][3], carry_vec[4][3], carry_vec[4][3],last_level[7]);
 
+  assign last_level[0] = sum_vec[0][0];
+  assign last_level[1] = sum_vec[1][0];
+  assign last_level[2] = sum_vec[2][0];
+  assign last_level[3] = sum_vec[3][0];
 
-    always@(posedge clk_i or negedge rst_i)
-     if (rst_i) current_state <= IDLE;
-     else        current_state <= next_state;
-
-    always @(*) begin
-            case(current_state) 
-
-                IDLE : if(req) begin
-                     next_state = CALC;
-                     ready_o = 1'b0;
-                    result_o = 64'b0;
-                    ready_temp = 0;
-                    end
-                       else begin
-                         ready_o = 1'b0;
-                         result_o = 64'b0;
-                         next_state = IDLE;
-                       end
-
-                CALC : if(ready_temp[5]) next_state = FINISH;
-                       else next_state = CALC;
-
-                FINISH : begin ready_o = 1'b1;
-                         result_o =  a_next5[0][63:0];
-                         next_state = IDLE;
-                        end
-                UNUSED : begin
-                    ready_o = 1'b0;
-                    result_o = 64'b0;
-                    next_state = IDLE;
-                    end
-            endcase 
-        end
-
-
-
-
-
-
-    
+  always @(posedge clk) begin
+    product[7:0] <= last_level[7:0];
+  end
 
 endmodule
