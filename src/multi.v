@@ -1,4 +1,4 @@
-module mul(
+module multi (
   input [3:0] a,          // 4-bit input A
   input [3:0] b,          // 4-bit input B
   input clk,

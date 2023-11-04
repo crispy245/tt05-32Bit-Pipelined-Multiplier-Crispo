@@ -16,7 +16,7 @@ module tt_um_4_bit_pipeline_multiplier(
     wire [2:0] generic;
     assign generic = {ena};
 
-    mul mul0(.a(ui_in[3:0]),
+    multi multi0(.a(ui_in[3:0]),
              .b(ui_in[7:4]),
              .clk(clk),
              .product(.uo_out));
