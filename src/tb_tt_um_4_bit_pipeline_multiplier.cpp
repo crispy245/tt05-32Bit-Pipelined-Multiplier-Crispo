@@ -15,9 +15,29 @@ int main(int argc, char** argv, char** env) {
     dut->trace(m_trace, 5);
     m_trace->open("waveform.vcd");
 
-    while (sim_time < MAX_SIM_TIME) {
+    while (sim_time < 10) {
         m_trace->dump(sim_time);
         sim_time++;
+        dut->ena = 1;
+        dut->rst_n = 1;
+        dut->clk ^= 1;
+        dut->ui_in = 119;
+        dut->eval();    
+    }
+    while (sim_time < 20) {
+        m_trace->dump(sim_time);
+        sim_time++;
+        dut->ena = 0;
+        dut->rst_n = 1;
+        dut->clk ^= 1;
+        dut->ui_in = 119;
+        dut->eval();    
+    }
+    while (sim_time < 30) {
+        m_trace->dump(sim_time);
+        sim_time++;
+        dut->ena = 1;
+        dut->rst_n = 0;
         dut->clk ^= 1;
         dut->ui_in = 119;
         dut->eval();    

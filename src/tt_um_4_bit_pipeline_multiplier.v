@@ -12,13 +12,12 @@ module tt_um_4_bit_pipeline_multiplier(
 );
     assign uio_out[7:0] = uio_in[7:0];
     assign uio_oe[7:0] = {8'b0};
-  
-    wire generic;
-    assign generic = {ena};
 
     multi multi0(.a(ui_in[3:0]),
              .b(ui_in[7:4]),
              .clk(clk),
+             .ena(ena),
+             .rst(rst_n),
              .product(uo_out));
 
     
