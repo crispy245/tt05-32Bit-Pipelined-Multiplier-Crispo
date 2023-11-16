@@ -8,3 +8,7 @@ src/__pycache__/
 src/__tinytapeout
 src/results.xml
 src/user_config.tcl
+src/obj_dir
+src/waveform.vcd
+src/.stamp.verilate
+
